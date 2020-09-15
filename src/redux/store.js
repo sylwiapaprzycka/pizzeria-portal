@@ -1,38 +1,41 @@
-// import {combineReducers, createStore} from 'redux';
+import {combineReducers, createStore, applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
 
-// // define initial state and shallow-merge initial data
-// const initialState = {
- 
-// };
+import productReducer from './productRedux';
 
-// // define reducers
-// const reducers = {
-//   filters: filtersReducer,
-//   order: orderReducer,
-// };
+// define initial state and shallow-merge initial data
+const initialState = {
+  products: {
+    loading: {
+      active: false,
+      error: false,
+    },
+    data: [],
+  },
+};
 
-// // add blank reducers for initial state properties without reducers
-// Object.keys(initialState).forEach(item => {
+// define reducers
+const reducers = {
+  products: productReducer,
+};
 
-//   if (typeof reducers[item] == 'undefined') {
-//     reducers[item] = (statePart = null) => statePart;
-//   }
-// });
+// add blank reducers for initial state properties without reducers
+Object.keys(initialState).forEach(item => {
+  if (typeof reducers[item] == 'undefined') {
+    reducers[item] = (statePart = null) => statePart;
+  }
+});
 
-// // combine reducers
-// const combinedReducers = combineReducers(reducers);
+const combinedReducers = combineReducers(reducers);
 
-// // merge all reducers with globalReducer
-// const storeReducer = (state, action) => {
-//   const modifiedState = globalReducer(state, action);
-//   return combinedReducers(modifiedState, action);
-// };
+// create store
+const store = createStore(
+  combinedReducers,
+  initialState,
+  composeWithDevTools(
+    applyMiddleware(thunk)
+  )
+);
 
-// // create store
-// const store = createStore(
-//   storeReducer,
-//   initialState,
-//   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-// );
-
-// export default store;
+export default store;
